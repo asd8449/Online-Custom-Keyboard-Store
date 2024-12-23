@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.BoardDAO">
+	<select id="selectBoard" resultType="boardVO">
+		select  board_no as no, COUNT(1) OVER(PARTITION BY post_type ORDER BY board_no)as num, title, user_id writer, to_char(reg_date,  'yyyy-mm-dd') regDate, post_type type
+    		from t_board
+    		order by post_type desc, board_no
+	</select>
+	<select id="selectByNo" parameterType="boardVO" resultType="boardVO">
+		select title, user_id writer, content, to_char(reg_date,  'yyyy-mm-dd') regDate, post_type type
+    		from t_board
+    		where board_no = #{no}
+	</select>
+	<insert id="insertBoard" parameterType="boardVO">
+		insert into t_board(board_no, user_id, title, content)
+			values(seq_t_board_no.nextval, #{writer}, #{title}, #{content})
+	</insert>
+</mapper>

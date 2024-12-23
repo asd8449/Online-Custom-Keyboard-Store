@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.ItemDAO">
+	<select id="selectByCategory" resultType="ItemVO" parameterType="ItemVO">
+		select item_cd as no, item_nm as name, stock, to_char(reg_date, 'yyyy-mm-dd') as regDate, manufacturer, price, description, category
+			from t_item
+				<if test="category != null">
+					where category = #{category}
+				</if>
+	</select>
+	<select id="selectByNo" resultType="ItemVO" parameterType="ItemVO">
+      select item_cd as no, item_nm as name, stock, to_char(reg_date, 'yyyy-mm-dd') as regDate, manufacturer, price, description, category
+         from t_item
+         where item_cd = #{no}
+   </select>
+   <update id="update" parameterType="ItemVO">
+   	update t_item
+   		set item_nm = #{name},
+   			category = #{category},
+   			stock = #{stock},
+   			manufacturer = #{manufacturer},
+   			price = #{price},
+   			description = #{description}
+   		where item_cd = #{no} 
+   </update>
+   <insert id="insert" parameterType="ItemVO">
+   	insert into t_item(item_cd, item_nm, category, stock, manufacturer, price, description)
+   		values(item_cd_seq.nextval, #{name}, #{category}, #{stock}, #{manufacturer}, #{price}, #{description})
+   </insert>
+   <delete id="delete" parameterType="ItemVO">
+   	delete from t_item
+   		where item_cd = #{no}
+   </delete>
+</mapper>
