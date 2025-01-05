@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.BoardFileDAO">
+	<select id="selectByBoardNo" parameterType="BoardVO" resultType="FileVO">
+		select file_id as fileNo, board_no as boardNo, file
+	</select>
+</mapper>
