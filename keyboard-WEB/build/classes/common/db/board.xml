@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.BoardDAO">
+	<select id="selectBoard" resultType="boardVO">
+		select  board_no as oriNo, COUNT(1) OVER(PARTITION BY post_type ORDER BY board_no) no, title, user_id as writer, content, to_char(reg_date,  'yyyy-mm-dd') regDate, post_type as type, view_cnt as viewCnt
+    		from t_board
+    		order by post_type desc, board_no
+	</select>
+	<select id="selectByNo" parameterType="boardVO" resultType="boardVO">
+		select board_no as no, title, user_id as writer, content, to_char(reg_date,  'yyyy-mm-dd') regDate, post_type as type, view_cnt as viewCnt, has_file as hasFile
+			from t_board
+			where board_no = #{oriNo}
+	</select>
+	<select id="selectBoardFiles" parameterType="boardVO" resultType="kr.ac.kopo.board.vo.BoardFileVO">
+	    SELECT file_no AS fileNo, board_no AS boardNo, file_ori_name AS fileOriName, file_save_name AS fileSaveName, file_path AS filePath
+	    FROM t_board_file
+	    WHERE board_no = #{oriNo}
+	</select>
+    <select id="getCurrentBoardNo" resultType="int">
+    	SELECT seq_t_board_no.CURRVAL FROM DUAL
+	</select>
+	<insert id="insertBoard" parameterType="boardVO">
+		insert into t_board(board_no, user_id, title, content, post_type, has_file)
+			values(seq_t_board_no.nextval, #{writer}, #{title}, #{content}, #{type}, #{hasFile})
+	</insert>
+	<insert id="insertBoardFile" parameterType="BoardFileVO">
+		INSERT INTO t_board_file(file_no, board_no, file_ori_name, file_save_name, file_path, file_size)
+        VALUES (seq_t_board_files.nextval, #{boardNo}, #{fileOriName}, #{fileSaveName}, #{filePath}, #{fileSize})
+	</insert>
+	<delete id="deleteByNo" parameterType="BoardVO">
+		delete from t_board
+		where board_no = #{no}
+	</delete>
+	<delete id="deleteFileByNo" parameterType="BoardVO">
+		delete from t_board_file
+		where board_no = #{no}
+	</delete>
+	<update id="updateBoard" parameterType="BoardVO">
+		update t_board
+		set title = #{title}, content = #{content}, post_type = #{type}, has_file = #{hasFile}
+		where board_no = #{no}
+	</update>
+</mapper>

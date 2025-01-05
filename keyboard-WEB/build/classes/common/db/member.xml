@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.MemberDAO">
+    <select id="selectMember" resultType="MemberVO" parameterType="MemberVO">
+        select user_id as id, password, user_name as name, email_name as emailName, email_domain as emailDomain, phone, user_type as type 
+        from t_user
+        <where>
+            <if test="id != null and id != ''">
+                user_id = #{id}
+            </if>
+            <if test="password != null and password != ''">
+                <if test="id != null and id != ''">
+                    and
+                </if>
+                password = #{password}
+            </if>
+        </where>
+    </select>
+    <select id="checkId" resultType="int" parameterType="string">
+        select count(*) 
+        from t_user
+        where user_id = #{id}
+    </select>
+    <insert id="join" parameterType="MemberVO">
+    	insert into t_user(user_id, password, user_name, email_name, email_domain, phone)
+    		values(#{id}, #{password}, #{name}, #{emailName}, #{emailDomain}, #{phone})
+    </insert>
+</mapper>
